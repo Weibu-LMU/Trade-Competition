@@ -1,17 +1,26 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
-# 创建假设的股票历史数据
-data = {
-    'Date': ['2021-01-01', '2021-01-02', '2021-01-03', '2021-01-04', '2021-01-05'],
-    'Close': [100, 102, 105, 110, 108]  # 假设的收盘价数据
-}
+# 设置随机种子以便结果可重复
+np.random.seed(42)
 
-# 将数据转换为 DataFrame
-stock_data = pd.DataFrame(data)
+# 假设的股票历史数据（具有一定的波动性）
+days = 60  # 假设60天的数据
+initial_price = 100  # 初始股价
+price_changes = np.random.randn(days) * 2  # 随机生成波动，每天波动为2元左右
 
-# 将 'Date' 列转换为日期格式
-stock_data['Date'] = pd.to_datetime(stock_data['Date'])
+# 创建股价序列，基于初始股价和随机波动
+prices = initial_price + np.cumsum(price_changes)  # 累积加总波动生成股价
+
+# 构造日期序列
+dates = pd.date_range(start='2023-01-01', periods=days, freq='D')
+
+# 创建DataFrame
+stock_data = pd.DataFrame({
+    'Date': dates,
+    'Close': prices
+})
 
 # 计算10日简单移动平均
 stock_data['SMA10'] = stock_data['Close'].rolling(window=10).mean()
@@ -32,7 +41,7 @@ portfolio_value = portfolio_data['Stock'].multiply(stock_data['Close'], axis=0)
 
 # 绘制回测后的投资组合价值变化曲线
 plt.figure(figsize=(10, 5))
-plt.plot(stock_data['Date'], portfolio_value.cumsum() + initial_capital, label='Portfolio Value')
+plt.plot(stock_data['Date'], portfolio_value.cumsum() + initial_capital, label='Portfolio Value', color='b')
 plt.xlabel('Date')
 plt.ylabel('Portfolio Value')
 plt.title('Backtest Portfolio Value Over Time')
