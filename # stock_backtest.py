@@ -1,10 +1,17 @@
-# stock_backtest.py
-
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 读取股票历史数据
-stock_data = pd.read_csv("stock_data.csv")
+# 创建假设的股票历史数据
+data = {
+    'Date': ['2021-01-01', '2021-01-02', '2021-01-03', '2021-01-04', '2021-01-05'],
+    'Close': [100, 102, 105, 110, 108]  # 假设的收盘价数据
+}
+
+# 将数据转换为 DataFrame
+stock_data = pd.DataFrame(data)
+
+# 将 'Date' 列转换为日期格式
+stock_data['Date'] = pd.to_datetime(stock_data['Date'])
 
 # 计算10日简单移动平均
 stock_data['SMA10'] = stock_data['Close'].rolling(window=10).mean()
@@ -30,4 +37,5 @@ plt.xlabel('Date')
 plt.ylabel('Portfolio Value')
 plt.title('Backtest Portfolio Value Over Time')
 plt.legend()
+plt.xticks(rotation=45)  # 使日期标签不重叠
 plt.show()
